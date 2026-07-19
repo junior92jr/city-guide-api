@@ -5,7 +5,7 @@ Main source of the information comes from Foursquare:
 
 * https://foursquare.com/
 
-It provides recommendations for touristic destinations based on your current location.
+It provides places for touristic destinations based on your current location.
 
 This API should provide dynamic information that will be displayed in a frontend project.
 
@@ -36,7 +36,7 @@ Response:
 
 Get all recomendations from your current location:
 ```
-(GET) /api/v1/recommendations/?lat=50.1101038&lng=8.6771587
+(GET) /api/v1/places/?lat=50.1101038&lng=8.6771587
 ```
 
 Get all the categories available categories from current results, Foursquate offers same functionality but every time we use the endpoint it consumes our montly budget. So are handling the functionality in our side.
@@ -45,14 +45,14 @@ Get all the categories available categories from current results, Foursquate off
 (GET) /api/v1/categories/?lat=50.1101038&lng=8.6771586
 ```
 
-Get all recommendations on a radius range in meters:
+Get all places on a radius range in meters:
 ```
-(GET) /api/v1/recommendations/?lat=50.1101038&lng=8.6771587&search_radious=62
+(GET) /api/v1/places/?lat=50.1101038&lng=8.6771587&search_radious=62
 ```
 
-Get all recommendations filterd by category:
+Get all places filterd by category:
 ```
-(GET) /api/v1/recommendations/?lat=50.1101038&lng=8.6771587&category=12334
+(GET) /api/v1/places/?lat=50.1101038&lng=8.6771587&category=12334
 ```
 
 where "12334" is the ID in Foursquare for a category.
@@ -62,10 +62,10 @@ where "12334" is the ID in Foursquare for a category.
 ### Create a virtualenv
 
 ```
-$ python3 -m venv location_advisor
+$ python3 -m venv city_guide
 ```
 
-This command will create a new folder with the name `location_advisor`
+This command will create a new folder with the name `city_guide`
 
 ### Clone the project
 
@@ -79,7 +79,7 @@ $ git clone git@github.com:junior92jr/location-advisor-backend.git
 ```
 
 ### Activate your enviroment
-Inside the `location_advisor` folder run the following command
+Inside the `city_guide` folder run the following command
 
 ```
 $ source bin/activate
@@ -88,14 +88,14 @@ $ source bin/activate
 After this you will see the virtualenv name in your prompt. i.e.:
 
 ```
-(location_advisor) $
+(city_guide) $
 ```
 
 ### Install requirements
 ```
-(location_advisor)$ cd location_advisor_backend
+(city_guide)$ cd city_guide_backend
 
-(location_advisor)$ pip install -r requirements.txt
+(city_guide)$ pip install -r requirements.txt
 ```
 
 ### Setting up environment variables for project
@@ -103,7 +103,7 @@ After this you will see the virtualenv name in your prompt. i.e.:
 For environment variables configuration, you will need a .env file in the parent directory of the current folder.
 
 ```
-(location_advisor) $ touch ../.env
+(city_guide) $ touch ../.env
 ```
 
 ../.env example
@@ -123,11 +123,11 @@ FOURSQUARE_API_KEY="external_service_api_key"
 Once you have everything ok, you can run the project.
 
 ```
-(location_advisor) $ ./manage.py check
+(city_guide) $ ./manage.py check
 
-(location_advisor) $ ./manage.py migrate
+(city_guide) $ ./manage.py migrate
 
-(location_advisor) $ ./manage.py runserver
+(city_guide) $ ./manage.py runserver
 ```
 
 ## Run tests
@@ -135,19 +135,19 @@ Once you have everything ok, you can run the project.
 Coverage is configured for the project for running tests and measuring in Scrutinizer
 
 ```
-(location_advisor) $ coverage run --source="." manage.py test --settings=location_advisor.test_settings --verbosity=2
+(city_guide) $ coverage run --source="." manage.py test --settings=city_guide.test_settings --verbosity=2
 ```
 
 Once ran, if you want to see fast the results you can run
 
 ```
-(location_advisor) $ coverage report
+(city_guide) $ coverage report
 ```
 
 or you can run 
 
 ```
-(location_advisor) $ coverage html
+(city_guide) $ coverage html
 ```
 
 and an HTML view of your test coverage will be generated in htmlcov/index.html
@@ -161,8 +161,8 @@ Sphinx is configured to build a user friendly site for code documentation.
 To build this files run
 
 ```
-(location_advisor) $ cd docs
-(location_advisor) $ make html
+(city_guide) $ cd docs
+(city_guide) $ make html
 ```
 
 They will be build in docs/build/html/ with index.html as the main page.

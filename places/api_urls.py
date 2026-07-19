@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .api_views import RecomendationViewSet
 
 
-app_name = "recommendations"
+app_name = "places"
 
 router = DefaultRouter()
 

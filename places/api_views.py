@@ -18,10 +18,10 @@ class RecomendationViewSet(viewsets.GenericViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = []
 
-    @action(methods=['get'], url_path=r'recommendations', detail=False)
-    def recommendations(self, request):
+    @action(methods=['get'], url_path=r'places', detail=False)
+    def places(self, request):
         """
-        Get method to retrieve all recommendations near a location.
+        Get method to retrieve all places near a location.
         """
 
         serializer = self.serializer_class(data=request.query_params)
@@ -43,7 +43,7 @@ class RecomendationViewSet(viewsets.GenericViewSet):
     @action(methods=['get'], url_path=r'categories', detail=False)
     def categories(self, request):
         """
-        Get method to retrieve all non repeated categories from requested recommendations.
+        Get method to retrieve all non repeated categories from requested places.
         """
 
         serializer = self.serializer_class(data=request.query_params)

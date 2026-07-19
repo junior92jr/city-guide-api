@@ -40,7 +40,7 @@ class RecommendationsTestCase(APITestCase):
             mock_request.return_value.content = FOURSQUARE_PLACES_V3_MOCK_200
 
             response = self.client.get(
-                '/api/v1/recommendations/', 
+                '/api/v1/places/', 
                 {'lat': '50.1101038', 'lng': '8.6771586'}, 
                 format='json'
             )
@@ -56,7 +56,7 @@ class RecommendationsTestCase(APITestCase):
             mock_request.return_value.content = FOURSQUARE_PLACES_V3_MOCK_200
 
             response = self.client.get(
-                '/api/v1/recommendations/', 
+                '/api/v1/places/', 
                 {'lat': '50.1101038', 'lng': '8.6771586'}, 
                 format='json'
             )
@@ -64,7 +64,7 @@ class RecommendationsTestCase(APITestCase):
     
     def test_get_places_by_location_400(self):
         response = self.client.get(
-            '/api/v1/recommendations/', 
+            '/api/v1/places/', 
             {'lat': 'not_valid_param', 'lat': 'not_valid_param'}, 
             format='json'
         )
@@ -77,7 +77,7 @@ class RecommendationsTestCase(APITestCase):
             mock_request.return_value.content = FOURSQUARE_PLACES_V3_MOCK_500
             
             response = self.client.get(
-                '/api/v1/recommendations/', 
+                '/api/v1/places/', 
                 {'lat': '50.1101038', 'lng': '5.6771586'},
                 format='json'
             )
