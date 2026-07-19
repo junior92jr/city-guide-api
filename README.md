@@ -1,9 +1,10 @@
 # Location Advisor Backend
 
 This backend project is a Rest Api that provides touristic information for a Frontend project.
-Main source of the information comes from Foursquare:
+Main source of the information comes from OpenStreetMap through the Overpass API:
 
-* https://foursquare.com/
+* https://www.openstreetmap.org/
+* https://overpass-api.de/
 
 It provides places for touristic destinations based on your current location.
 
@@ -39,7 +40,7 @@ Get all recomendations from your current location:
 (GET) /api/v1/places/?lat=50.1101038&lng=8.6771587
 ```
 
-Get all the categories available categories from current results, Foursquate offers same functionality but every time we use the endpoint it consumes our montly budget. So are handling the functionality in our side.
+Get all the categories available from current results.
 
 ```
 (GET) /api/v1/categories/?lat=50.1101038&lng=8.6771586
@@ -55,7 +56,7 @@ Get all places filterd by category:
 (GET) /api/v1/places/?lat=50.1101038&lng=8.6771587&category=12334
 ```
 
-where "12334" is the ID in Foursquare for a category.
+where "12334" is the generated category ID returned by the categories endpoint.
 
 
 ## Configure the project
@@ -94,10 +95,11 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 CSRF_TRUSTED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000
 DATABASE_URL=sqlite:///db.sqlite3
 CACHE_LOCATION=.cache
-FOURSQUARE_API_KEY=
+OPEN_STREET_MAP_OVERPASS_URL=https://overpass-api.de/api/interpreter
+OPEN_STREET_MAP_USER_AGENT=city-guide-api-demo
 ```
 
-Use a real `SECRET_KEY` and `FOURSQUARE_API_KEY` outside local development.
+Use a real `SECRET_KEY` outside local development.
 
 Supported `DATABASE_URL` examples:
 

@@ -1,7 +1,7 @@
 
-class FourSquareUtilsMixin:
+class PlaceResourceUtilsMixin:
     """
-    Utils class to process the main response from FourSquare Service.
+    Utils class to process place resource responses.
     """
     
     @staticmethod
@@ -31,7 +31,7 @@ class FourSquareUtilsMixin:
         filtered_response = []
 
         for place in resource_response:
-            for category_item in place.get('categories'):
+            for category_item in place.get('categories', []):
                 if category_item.get('id') == category:
                     filtered_response.append(place)
 
@@ -50,8 +50,8 @@ class FourSquareUtilsMixin:
         all_categories = []
 
         for place in resource_response:
-            for catefory in place.get('categories'):
-                all_categories.append(catefory)
+            for category_item in place.get('categories', []):
+                all_categories.append(category_item)
         
         all_categories = [
             item for counter, item in enumerate(

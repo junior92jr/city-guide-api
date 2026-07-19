@@ -4,10 +4,41 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .mocks.foursquare_places_v3_mock import (
-    FOURSQUARE_PLACES_V3_MOCK_200, 
-    FOURSQUARE_PLACES_V3_MOCK_500
-)
+OPEN_STREET_MAP_RESPONSE_200 = {
+    "elements": [
+        {
+            "type": "node",
+            "id": 660490408,
+            "lat": 50.9296019,
+            "lon": 6.94194,
+            "tags": {
+                "historic": "memorial",
+                "image": (
+                    "https://commons.wikimedia.org/wiki/"
+                    "File:Stolpersteine_Koeln_Kurt_Friedlich.jpg"
+                ),
+                "memorial": "stolperstein",
+                "memorial:addr": "Weyerstrasse 122",
+                "name": "Kurt Friedlich",
+                "website": "https://nsdok.de/Stolpersteine-in-Koeln",
+            },
+        },
+    ],
+}
+
+OPEN_STREET_MAP_RESPONSE_500 = {
+    "remark": "runtime error",
+}
+
+
+class MockResponse:
+    def __init__(self, status_code, payload):
+        self.status_code = status_code
+        self.payload = payload
+        self.text = str(payload)
+
+    def json(self):
+        return self.payload
 
 
 class RecommendationsTestCase(APITestCase):
@@ -36,8 +67,10 @@ class RecommendationsTestCase(APITestCase):
     def test_get_places_by_location_200(self):
         with patch('requests.get') as mock_request:
 
-            mock_request.return_value.status_code = status.HTTP_200_OK
-            mock_request.return_value.content = FOURSQUARE_PLACES_V3_MOCK_200
+            mock_request.return_value = MockResponse(
+                status.HTTP_200_OK,
+                OPEN_STREET_MAP_RESPONSE_200,
+            )
 
             response = self.client.get(
                 '/api/v1/places/', 
@@ -48,19 +81,21 @@ class RecommendationsTestCase(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(type(response.json()), list)
 
-    def test_get_places_by_location_401(self):
+    def test_get_places_by_location_without_auth_200(self):
         self.client.credentials()
         with patch('requests.get') as mock_request:
 
-            mock_request.return_value.status_code = status.HTTP_200_OK
-            mock_request.return_value.content = FOURSQUARE_PLACES_V3_MOCK_200
+            mock_request.return_value = MockResponse(
+                status.HTTP_200_OK,
+                OPEN_STREET_MAP_RESPONSE_200,
+            )
 
             response = self.client.get(
                 '/api/v1/places/', 
                 {'lat': '50.1101038', 'lng': '8.6771586'}, 
                 format='json'
             )
-            self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
     
     def test_get_places_by_location_400(self):
         response = self.client.get(
@@ -73,8 +108,10 @@ class RecommendationsTestCase(APITestCase):
     
     def test_get_places_by_location_500(self):
         with patch('requests.get') as mock_request:
-            mock_request.return_value.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-            mock_request.return_value.content = FOURSQUARE_PLACES_V3_MOCK_500
+            mock_request.return_value = MockResponse(
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+                OPEN_STREET_MAP_RESPONSE_500,
+            )
             
             response = self.client.get(
                 '/api/v1/places/', 

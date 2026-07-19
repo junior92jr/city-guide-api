@@ -2,20 +2,20 @@
 from rest_framework import viewsets
 
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 
 from .serializers import RecomendatiosQuerySerializer
-from .resources import FourSquareResource
+from .resources import OpenStreetMapResource
 
 
 class RecomendationViewSet(viewsets.GenericViewSet):
     """
-    ViewSet that handle the connection the Foursquare API
+    ViewSet that handles the connection to OpenStreetMap POI data.
     """
 
     serializer_class = RecomendatiosQuerySerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     queryset = []
 
     @action(methods=['get'], url_path=r'places', detail=False)
@@ -28,15 +28,15 @@ class RecomendationViewSet(viewsets.GenericViewSet):
         
         serializer.is_valid(raise_exception=True)
 
-        response = FourSquareResource.search_places_by_location(serializer.data)
+        response = OpenStreetMapResource.search_places_by_location(serializer.data)
         category = serializer.data.get('category')
         search_radious = serializer.data.get('search_radious')
         
         if category:
-            response = FourSquareResource.filter_by_category(response, category)
+            response = OpenStreetMapResource.filter_by_category(response, category)
         
         if search_radious:
-            response = FourSquareResource.range_query(response, search_radious)
+            response = OpenStreetMapResource.range_query(response, search_radious)
 
         return Response(response)
 
@@ -50,7 +50,7 @@ class RecomendationViewSet(viewsets.GenericViewSet):
         
         serializer.is_valid(raise_exception=True)
 
-        categories = FourSquareResource.get_categories(
-            FourSquareResource.search_places_by_location(serializer.data))
+        categories = OpenStreetMapResource.get_categories(
+            OpenStreetMapResource.search_places_by_location(serializer.data))
 
         return Response(categories)

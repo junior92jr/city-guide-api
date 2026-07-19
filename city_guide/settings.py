@@ -14,7 +14,11 @@ env = environ.Env(
     CSRF_TRUSTED_ORIGINS=(list, []),
     CACHE_LOCATION=(str, str(BASE_DIR / ".cache")),
     DATABASE_URL=(str, f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
-    FOURSQUARE_API_KEY=(str, ""),
+    OPEN_STREET_MAP_OVERPASS_URL=(
+        str,
+        "https://overpass-api.de/api/interpreter",
+    ),
+    OPEN_STREET_MAP_USER_AGENT=(str, "city-guide-api-demo"),
 )
 
 env_file = BASE_DIR / ".env"
@@ -30,6 +34,10 @@ DEBUG = env("DEBUG")
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
+
+CACHE_LOCATION = Path(env("CACHE_LOCATION"))
+if not CACHE_LOCATION.is_absolute():
+    CACHE_LOCATION = BASE_DIR / CACHE_LOCATION
 
 
 # Applications
@@ -91,7 +99,7 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
-        "LOCATION": env("CACHE_LOCATION"),
+        "LOCATION": CACHE_LOCATION,
     },
 }
 
@@ -163,7 +171,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # External services
-FOURSQUARE_API_KEY = env("FOURSQUARE_API_KEY")
+OPEN_STREET_MAP_OVERPASS_URL = env("OPEN_STREET_MAP_OVERPASS_URL")
+
+OPEN_STREET_MAP_USER_AGENT = env("OPEN_STREET_MAP_USER_AGENT")
 
 
 # Django REST Framework

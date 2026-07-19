@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
 
-from .api_views import RecomendationViewSet
+from .views import RecomendationViewSet
 
 
 app_name = "places"
