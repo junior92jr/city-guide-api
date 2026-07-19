@@ -59,13 +59,8 @@ where "12334" is the ID in Foursquare for a category.
 
 
 ## Configure the project
-### Create a virtualenv
 
-```
-$ python3 -m venv city_guide
-```
-
-This command will create a new folder with the name `city_guide`
+This project uses [uv](https://docs.astral.sh/uv/) for Python dependency and virtual environment management.
 
 ### Clone the project
 
@@ -78,76 +73,70 @@ then if you dont have a key that points to your computer follow this tutorial:
 $ git clone git@github.com:junior92jr/location-advisor-backend.git
 ```
 
-### Activate your enviroment
-Inside the `city_guide` folder run the following command
+### Install dependencies
 
-```
-$ source bin/activate
-```
+From the project root, sync the environment:
 
-After this you will see the virtualenv name in your prompt. i.e.:
-
-```
-(city_guide) $
+```bash
+uv sync
 ```
 
-### Install requirements
-```
-(city_guide)$ cd city_guide_backend
+### Setting up environment variables
 
-(city_guide)$ pip install -r requirements.txt
-```
+Create a `.env` file in the project root, next to `manage.py`.
 
-### Setting up environment variables for project
+Required variables:
 
-For environment variables configuration, you will need a .env file in the parent directory of the current folder.
-
-```
-(city_guide) $ touch ../.env
-```
-
-../.env example
-
-```
+```env
+SECRET_KEY=django-insecure-local-dev-change-me
 DEBUG=True
-
-SECRET_KEY="secret_key_for_django_application"
-
-FOURSQUARE_API_KEY="external_service_api_key"
+ALLOWED_HOSTS=localhost,127.0.0.1
+CSRF_TRUSTED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000
+DATABASE_URL=sqlite:///db.sqlite3
+CACHE_LOCATION=.cache
+FOURSQUARE_API_KEY=
 ```
 
+Use a real `SECRET_KEY` and `FOURSQUARE_API_KEY` outside local development.
+
+Supported `DATABASE_URL` examples:
+
+```env
+DATABASE_URL=sqlite:///db.sqlite3
+DATABASE_URL=postgres://user:password@localhost:5432/city_guide
+```
 
 # Running the project
 ## Run the project
 
 Once you have everything ok, you can run the project.
 
-```
-(city_guide) $ ./manage.py check
+```bash
+uv run python manage.py check
 
-(city_guide) $ ./manage.py migrate
+uv run python manage.py migrate
 
-(city_guide) $ ./manage.py runserver
+uv run python manage.py runserver
 ```
 
 ## Run tests
 
 Coverage is configured for the project for running tests and measuring in Scrutinizer
 
-```
-(city_guide) $ coverage run --source="." manage.py test --settings=city_guide.test_settings --verbosity=2
+```bash
+uv run coverage run --source="." manage.py test --verbosity=2
 ```
 
 Once ran, if you want to see fast the results you can run
 
-```
-(city_guide) $ coverage report
+```bash
+uv run coverage report
 ```
 
 or you can run 
 
-```
-(city_guide) $ coverage html
+```bash
+uv run coverage html
 ```
 
 and an HTML view of your test coverage will be generated in htmlcov/index.html

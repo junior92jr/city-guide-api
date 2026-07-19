@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 
 
-class ClientFoursquareConfig(AppConfig):
-    name = 'places'
+class PlacesConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "places"
