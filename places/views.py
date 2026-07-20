@@ -1,4 +1,3 @@
-
 from rest_framework import viewsets
 
 from rest_framework.response import Response
@@ -6,7 +5,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 
 from .serializers import RecomendatiosQuerySerializer
-from .resources import OpenStreetMapResource
+from .services import PlaceSearchService
 
 
 class RecomendationViewSet(viewsets.GenericViewSet):
@@ -25,32 +24,23 @@ class RecomendationViewSet(viewsets.GenericViewSet):
         """
 
         serializer = self.serializer_class(data=request.query_params)
-        
+
         serializer.is_valid(raise_exception=True)
 
-        response = OpenStreetMapResource.search_places_by_location(serializer.data)
-        category = serializer.data.get('category')
-        search_radious = serializer.data.get('search_radious')
-        
-        if category:
-            response = OpenStreetMapResource.filter_by_category(response, category)
-        
-        if search_radious:
-            response = OpenStreetMapResource.range_query(response, search_radious)
+        response = PlaceSearchService.search_places_by_location(serializer.data)
 
-        return Response(response)
+        return Response(response.model_dump(by_alias=True, exclude_none=True))
 
     @action(methods=['get'], url_path=r'categories', detail=False)
     def categories(self, request):
         """
-        Get method to retrieve all non repeated categories from requested places.
+        Get method to retrieve the mapped OpenStreetMap response.
         """
 
         serializer = self.serializer_class(data=request.query_params)
-        
+
         serializer.is_valid(raise_exception=True)
 
-        categories = OpenStreetMapResource.get_categories(
-            OpenStreetMapResource.search_places_by_location(serializer.data))
+        response = PlaceSearchService.search_places_by_location(serializer.data)
 
-        return Response(categories)
+        return Response(response.model_dump(by_alias=True, exclude_none=True))

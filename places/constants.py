@@ -1,6 +1,0 @@
-
-OPEN_STREET_MAP_OVERPASS_URL = "https://overpass-api.de/api/interpreter"
-OPEN_STREET_MAP_DEFAULT_RADIUS_IN_METERS = 1000
-OPEN_STREET_MAP_USER_AGENT = "city-guide-api-demo"
-
-CACHE_TIMEOUT_IN_SECS = 86400

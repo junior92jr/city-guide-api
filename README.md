@@ -96,7 +96,9 @@ CSRF_TRUSTED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000
 DATABASE_URL=sqlite:///db.sqlite3
 CACHE_LOCATION=.cache
 OPEN_STREET_MAP_OVERPASS_URL=https://overpass-api.de/api/interpreter
+OPEN_STREET_MAP_DEFAULT_RADIUS_IN_METERS=1000
 OPEN_STREET_MAP_USER_AGENT=city-guide-api-demo
+CACHE_TIMEOUT_IN_SECS=86400
 ```
 
 Use a real `SECRET_KEY` outside local development.
