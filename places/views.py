@@ -1,16 +1,19 @@
-from rest_framework import viewsets
+from typing import cast
 
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 from .serializers import RecomendatiosQuerySerializer
 from .services import PlaceSearchService
+from .services.types import PlaceQueryParams
 
 
 class RecomendationViewSet(viewsets.GenericViewSet):
     """
-    ViewSet that handles the connection to OpenStreetMap POI data.
+    ViewSet that exposes OpenStreetMap place data.
     """
 
     serializer_class = RecomendatiosQuerySerializer
@@ -18,29 +21,20 @@ class RecomendationViewSet(viewsets.GenericViewSet):
     queryset = []
 
     @action(methods=['get'], url_path=r'places', detail=False)
-    def places(self, request):
+    def places(self, request: Request) -> Response:
         """
-        Get method to retrieve all places near a location.
+        Retrieve places near a location from OpenStreetMap.
         """
 
+        response = PlaceSearchService.search_places_by_location(
+            self.get_query_params(request)
+        )
+
+        return Response(response.model_dump(by_alias=True, exclude_none=True))
+
+    def get_query_params(self, request: Request) -> PlaceQueryParams:
         serializer = self.serializer_class(data=request.query_params)
 
         serializer.is_valid(raise_exception=True)
 
-        response = PlaceSearchService.search_places_by_location(serializer.data)
-
-        return Response(response.model_dump(by_alias=True, exclude_none=True))
-
-    @action(methods=['get'], url_path=r'categories', detail=False)
-    def categories(self, request):
-        """
-        Get method to retrieve the mapped OpenStreetMap response.
-        """
-
-        serializer = self.serializer_class(data=request.query_params)
-
-        serializer.is_valid(raise_exception=True)
-
-        response = PlaceSearchService.search_places_by_location(serializer.data)
-
-        return Response(response.model_dump(by_alias=True, exclude_none=True))
+        return cast(PlaceQueryParams, serializer.validated_data)
