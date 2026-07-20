@@ -14,4 +14,15 @@ class PlaceSearchService:
         query_params: PlaceQueryParams,
     ) -> OpenStreetMapApiResponse:
         payload = OpenStreetMapClient.fetch_places_payload(query_params)
-        return OpenStreetMapApiResponse.from_api_response(payload)
+        response = OpenStreetMapApiResponse.from_api_response(payload)
+        category = query_params.get("category")
+
+        if category is None:
+            return response
+
+        return OpenStreetMapApiResponse(
+            places=[
+                place for place in response.places
+                if place.category == category
+            ]
+        )

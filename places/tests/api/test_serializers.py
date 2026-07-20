@@ -11,6 +11,7 @@ def test_recomendations_query_serializer_accepts_required_coordinates():
     assert serializer.validated_data == {
         "lat": 50.1101038,
         "lng": 8.6771586,
+        "search_radious": 1000,
     }
 
 
@@ -19,7 +20,7 @@ def test_recomendations_query_serializer_accepts_optional_filters():
         "lat": "50.1101038",
         "lng": "8.6771586",
         "search_radious": "250",
-        "category": "10",
+        "category": "parking",
     })
 
     assert serializer.is_valid()
@@ -27,7 +28,7 @@ def test_recomendations_query_serializer_accepts_optional_filters():
         "lat": 50.1101038,
         "lng": 8.6771586,
         "search_radious": 250,
-        "category": 10,
+        "category": "parking",
     }
 
 
@@ -48,3 +49,14 @@ def test_recomendations_query_serializer_rejects_invalid_coordinates():
 
     assert not serializer.is_valid()
     assert "lat" in serializer.errors
+
+
+def test_recomendations_query_serializer_rejects_unknown_category():
+    serializer = RecomendatiosQuerySerializer(data={
+        "lat": "50.1101038",
+        "lng": "8.6771586",
+        "category": "unknown",
+    })
+
+    assert not serializer.is_valid()
+    assert "category" in serializer.errors

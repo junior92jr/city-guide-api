@@ -13,7 +13,11 @@ def api_client():
 
 
 def test_places_returns_mapped_open_street_map_response(api_client):
-    query_params = {"lat": 50.1101038, "lng": 8.6771586}
+    query_params = {
+        "lat": 50.1101038,
+        "lng": 8.6771586,
+        "search_radious": 1000,
+    }
     service_response = OpenStreetMapApiResponse.from_api_response({
         "version": 0.6,
         "generator": "Overpass API",
@@ -23,7 +27,10 @@ def test_places_returns_mapped_open_street_map_response(api_client):
                 "id": 331124761,
                 "lat": 51.9322712,
                 "lon": 6.9442418,
-                "tags": {"name": "Heiliger Ludgerus"},
+                "tags": {
+                    "historic": "wayside_shrine",
+                    "name": "Heiliger Ludgerus",
+                },
             },
         ],
     })
@@ -38,15 +45,16 @@ def test_places_returns_mapped_open_street_map_response(api_client):
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {
-        "version": 0.6,
-        "generator": "Overpass API",
-        "elements": [
+        "places": [
             {
-                "type": "node",
-                "id": 331124761,
-                "lat": 51.9322712,
-                "lon": 6.9442418,
-                "tags": {"name": "Heiliger Ludgerus"},
+                "osm_id": 331124761,
+                "osm_type": "node",
+                "name": "Heiliger Ludgerus",
+                "latitude": 51.9322712,
+                "longitude": 6.9442418,
+                "category": "wayside-shrine",
+                "category_name": "Wayside Shrine",
+                "osm_uid": "osm-node-331124761",
             },
         ],
     }
@@ -72,7 +80,7 @@ def test_places_passes_optional_radius_to_search_service(api_client):
     })
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {"elements": []}
+    assert response.json() == {"places": []}
 
 
 def test_places_returns_bad_request_for_invalid_query_params(api_client):
@@ -87,10 +95,36 @@ def test_places_returns_bad_request_for_invalid_query_params(api_client):
     assert "lat" in response.json()
 
 
-def test_categories_endpoint_is_not_registered(api_client):
-    response = api_client.get("/api/v1/categories/", {
+def test_places_passes_optional_category_to_search_service(api_client):
+    query_params = {
+        "lat": 50.1101038,
+        "lng": 8.6771586,
+        "search_radious": 1000,
+        "category": "parking",
+    }
+    service_response = OpenStreetMapApiResponse.from_api_response({
+        "elements": [],
+    })
+    mocker(PlaceSearchService).mock(
+        "search_places_by_location"
+    ).called_once_with(query_params).return_value(service_response)
+
+    response = api_client.get("/api/v1/places/", {
         "lat": "50.1101038",
         "lng": "8.6771586",
+        "category": "parking",
     })
 
-    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_categories_endpoint_returns_known_categories(api_client):
+    response = api_client.get("/api/v1/categories/")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["categories"][3] == {
+        "slug": "parking",
+        "name": "Parking",
+        "osm_key": "amenity",
+        "osm_value": "parking",
+    }

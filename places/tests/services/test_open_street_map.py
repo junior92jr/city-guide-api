@@ -8,12 +8,11 @@ from places.services.cache import OpenStreetMapCache
 from places.services.open_street_map import OpenStreetMapClient
 
 
-def test_build_request_payload_uses_default_radius(settings):
-    settings.OPEN_STREET_MAP_DEFAULT_RADIUS_IN_METERS = 1000
-
+def test_build_request_payload_uses_radius_parameter():
     payload = OpenStreetMapClient.build_request_payload({
         "lat": 50.1101038,
         "lng": 8.6771586,
+        "search_radious": 1000,
     })
 
     assert "around:1000,50.1101038,8.6771586" in payload["data"]
@@ -53,6 +52,7 @@ def test_request_places_calls_overpass(settings):
     assert OpenStreetMapClient.request_places({
         "lat": 50.1101038,
         "lng": 8.6771586,
+        "search_radious": 1000,
     }) == response
 
 
@@ -66,11 +66,16 @@ def test_request_places_raises_service_unavailable_for_request_errors():
         OpenStreetMapClient.request_places({
             "lat": 50.1101038,
             "lng": 8.6771586,
+            "search_radious": 1000,
         })
 
 
 def test_fetch_places_payload_returns_cached_payload():
-    query_params = {"lat": 50.1101038, "lng": 8.6771586}
+    query_params = {
+        "lat": 50.1101038,
+        "lng": 8.6771586,
+        "search_radious": 1000,
+    }
     payload = {"elements": []}
     mocker(OpenStreetMapCache).mock("get_payload").called_once_with(
         query_params
@@ -81,7 +86,11 @@ def test_fetch_places_payload_returns_cached_payload():
 
 
 def test_fetch_places_payload_caches_successful_payload():
-    query_params = {"lat": 50.1101038, "lng": 8.6771586}
+    query_params = {
+        "lat": 50.1101038,
+        "lng": 8.6771586,
+        "search_radious": 1000,
+    }
     payload = {"elements": []}
     response = httpx.Response(
         httpx.codes.OK,
@@ -111,6 +120,7 @@ def test_fetch_places_payload_raises_service_unavailable_for_error_status():
         OpenStreetMapClient.fetch_places_payload({
             "lat": 50.1101038,
             "lng": 8.6771586,
+            "search_radious": 1000,
         })
 
 
@@ -127,4 +137,5 @@ def test_fetch_places_payload_raises_service_unavailable_for_non_object_json():
         OpenStreetMapClient.fetch_places_payload({
             "lat": 50.1101038,
             "lng": 8.6771586,
+            "search_radious": 1000,
         })

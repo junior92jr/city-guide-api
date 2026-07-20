@@ -18,7 +18,6 @@ env = environ.Env(
         str,
         "https://overpass-api.de/api/interpreter",
     ),
-    OPEN_STREET_MAP_DEFAULT_RADIUS_IN_METERS=(int, 1000),
     OPEN_STREET_MAP_USER_AGENT=(str, "city-guide-api-demo"),
     CACHE_TIMEOUT_IN_SECS=(int, 86400),
 )
@@ -174,10 +173,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # External services
 OPEN_STREET_MAP_OVERPASS_URL = env("OPEN_STREET_MAP_OVERPASS_URL")
-
-OPEN_STREET_MAP_DEFAULT_RADIUS_IN_METERS = env(
-    "OPEN_STREET_MAP_DEFAULT_RADIUS_IN_METERS"
-)
 
 OPEN_STREET_MAP_USER_AGENT = env("OPEN_STREET_MAP_USER_AGENT")
 

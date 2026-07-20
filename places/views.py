@@ -7,7 +7,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from .serializers import RecomendatiosQuerySerializer
-from .services import PlaceSearchService
+from .services import PlaceSearchService, get_categories
 from .services.types import PlaceQueryParams
 
 
@@ -31,6 +31,14 @@ class RecomendationViewSet(viewsets.GenericViewSet):
         )
 
         return Response(response.model_dump(by_alias=True, exclude_none=True))
+
+    @action(methods=['get'], url_path=r'categories', detail=False)
+    def categories(self, request: Request) -> Response:
+        """
+        Retrieve the known categories supported by the places API.
+        """
+
+        return Response({"categories": get_categories()})
 
     def get_query_params(self, request: Request) -> PlaceQueryParams:
         serializer = self.serializer_class(data=request.query_params)

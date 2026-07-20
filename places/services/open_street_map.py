@@ -76,16 +76,11 @@ class OpenStreetMapClient:
         cls,
         query_params: PlaceQueryParams,
     ) -> dict[str, str]:
-        radius = query_params.get(
-            "search_radious",
-            settings.OPEN_STREET_MAP_DEFAULT_RADIUS_IN_METERS,
-        )
-
         return {
             "data": cls.build_overpass_query(
                 lat=query_params["lat"],
                 lng=query_params["lng"],
-                radius=radius,
+                radius=query_params["search_radious"],
             )
         }
 

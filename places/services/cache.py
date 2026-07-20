@@ -1,8 +1,8 @@
 import hashlib
 from typing import cast
 
-from django.conf import settings
 from django.core.cache import cache
+from django.conf import settings
 
 from .types import OpenStreetMapPayload, PlaceQueryParams
 
@@ -44,15 +44,11 @@ class OpenStreetMapCache:
 
     @classmethod
     def build_key(cls, query_params: PlaceQueryParams) -> str:
-        radius = query_params.get(
-            "search_radious",
-            settings.OPEN_STREET_MAP_DEFAULT_RADIUS_IN_METERS,
-        )
         cache_key = (
             "open-street-map-"
             f"{query_params['lat']}-"
             f"{query_params['lng']}-"
-            f"{radius}"
+            f"{query_params['search_radious']}"
         )
 
         return hashlib.sha1(cache_key.encode("utf-8")).hexdigest()

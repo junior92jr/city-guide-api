@@ -1,6 +1,6 @@
 # Location Advisor Backend
 
-This backend project is a Rest Api that provides touristic information for a Frontend project.
+This backend project is a REST API that provides touristic information for a frontend project.
 Main source of the information comes from OpenStreetMap through the Overpass API:
 
 * https://www.openstreetmap.org/
@@ -12,7 +12,7 @@ This API should provide dynamic information that will be displayed in a frontend
 
 ## Usage
 
-This project stills on development but already provides functional endpoints ready to use:
+This project is still in development but already provides functional endpoints ready to use:
 
 ### How to Authenticate
 Auth endpoint:
@@ -35,28 +35,59 @@ Response:
 
 ### How to use the location service
 
-Get all recomendations from your current location:
+Get places near a location:
 ```
 (GET) /api/v1/places/?lat=50.1101038&lng=8.6771587
 ```
 
-Get all the categories available from current results.
+The default search radius is `1000` meters.
 
+Get places within a custom radius in meters:
 ```
-(GET) /api/v1/categories/?lat=50.1101038&lng=8.6771586
-```
-
-Get all places on a radius range in meters:
-```
-(GET) /api/v1/places/?lat=50.1101038&lng=8.6771587&search_radious=62
+(GET) /api/v1/places/?lat=50.1101038&lng=8.6771587&search_radious=250
 ```
 
-Get all places filterd by category:
+Get known categories available for filtering:
 ```
-(GET) /api/v1/places/?lat=50.1101038&lng=8.6771587&category=12334
+(GET) /api/v1/categories/
 ```
 
-where "12334" is the generated category ID returned by the categories endpoint.
+Filter places by a known category slug:
+```
+(GET) /api/v1/places/?lat=50.1101038&lng=8.6771587&category=parking
+```
+
+Example category response:
+```json
+{
+  "categories": [
+    {
+      "slug": "parking",
+      "name": "Parking",
+      "osm_key": "amenity",
+      "osm_value": "parking"
+    }
+  ]
+}
+```
+
+Example places response:
+```json
+{
+  "places": [
+    {
+      "osm_id": 331124761,
+      "osm_type": "node",
+      "name": "Heiliger Ludgerus",
+      "latitude": 51.9322712,
+      "longitude": 6.9442418,
+      "category": "wayside-shrine",
+      "category_name": "Wayside Shrine",
+      "osm_uid": "osm-node-331124761"
+    }
+  ]
+}
+```
 
 
 ## Configure the project
@@ -96,7 +127,6 @@ CSRF_TRUSTED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000
 DATABASE_URL=sqlite:///db.sqlite3
 CACHE_LOCATION=.cache
 OPEN_STREET_MAP_OVERPASS_URL=https://overpass-api.de/api/interpreter
-OPEN_STREET_MAP_DEFAULT_RADIUS_IN_METERS=1000
 OPEN_STREET_MAP_USER_AGENT=city-guide-api-demo
 CACHE_TIMEOUT_IN_SECS=86400
 ```
@@ -125,27 +155,23 @@ uv run python manage.py runserver
 
 ## Run tests
 
-Coverage is configured for the project for running tests and measuring in Scrutinizer
+Tests are written with pytest.
 
 ```bash
-uv run coverage run --source="." manage.py test --verbosity=2
+uv run pytest
 ```
 
-Once ran, if you want to see fast the results you can run
+Run only the places tests:
 
 ```bash
-uv run coverage report
+uv run pytest places/tests
 ```
 
-or you can run 
+Run Django's system check:
 
 ```bash
-uv run coverage html
+uv run python manage.py check
 ```
-
-and an HTML view of your test coverage will be generated in htmlcov/index.html
-
-Note: Coverage stills missing but tests are running with test.py django command.
 
 # Build Documentation
 
