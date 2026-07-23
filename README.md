@@ -44,7 +44,7 @@ The default search radius is `1000` meters.
 
 Get places within a custom radius in meters:
 ```
-(GET) /api/v1/places/?lat=50.1101038&lng=8.6771587&search_radious=250
+(GET) /api/v1/places/?lat=50.1101038&lng=8.6771587&search_radius=250
 ```
 
 Get known categories available for filtering:
@@ -59,14 +59,12 @@ Filter places by a known category slug:
 
 Example category response:
 ```json
-{
-  "categories": [
-    {
-      "slug": "parking",
-      "name": "Parking"
-    }
-  ]
-}
+[
+  {
+    "slug": "parking",
+    "name": "Parking"
+  }
+]
 ```
 
 Example places response:
