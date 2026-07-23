@@ -1,4 +1,8 @@
+import pytest
+
 from places.services.mappers import OpenStreetMapApiResponse
+
+pytestmark = pytest.mark.django_db
 
 
 def test_open_street_map_api_response_maps_flat_places():

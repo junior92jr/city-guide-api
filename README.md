@@ -63,9 +63,7 @@ Example category response:
   "categories": [
     {
       "slug": "parking",
-      "name": "Parking",
-      "osm_key": "amenity",
-      "osm_value": "parking"
+      "name": "Parking"
     }
   ]
 }

@@ -6,6 +6,8 @@ from rest_framework.test import APIClient
 from places.services.mappers import OpenStreetMapApiResponse
 from places.views import PlaceSearchService
 
+pytestmark = pytest.mark.django_db
+
 
 @pytest.fixture
 def api_client():
@@ -125,6 +127,4 @@ def test_categories_endpoint_returns_known_categories(api_client):
     assert response.json()["categories"][3] == {
         "slug": "parking",
         "name": "Parking",
-        "osm_key": "amenity",
-        "osm_value": "parking",
     }

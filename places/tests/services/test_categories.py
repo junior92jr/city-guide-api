@@ -1,8 +1,12 @@
+import pytest
+
 from places.services.categories import (
     get_categories,
     get_category_by_slug,
     get_category_from_tags,
 )
+
+pytestmark = pytest.mark.django_db
 
 
 def test_get_categories_returns_known_category_catalog():
@@ -11,14 +15,10 @@ def test_get_categories_returns_known_category_catalog():
     assert categories[3] == {
         "slug": "parking",
         "name": "Parking",
-        "osm_key": "amenity",
-        "osm_value": "parking",
     }
     assert categories[25] == {
         "slug": "wayside-shrine",
         "name": "Wayside Shrine",
-        "osm_key": "historic",
-        "osm_value": "wayside_shrine",
     }
 
 

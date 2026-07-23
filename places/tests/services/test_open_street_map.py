@@ -2,10 +2,12 @@ import httpx
 import pytest
 from chainmock import mocker
 
-from places.exceptions import OpenStreetMapResourceUnavailable
 from places.services import open_street_map
 from places.services.cache import OpenStreetMapCache
-from places.services.open_street_map import OpenStreetMapClient
+from places.services.open_street_map import (
+    OpenStreetMapClient,
+    OpenStreetMapResourceUnavailable,
+)
 
 
 def test_build_request_payload_uses_radius_parameter():

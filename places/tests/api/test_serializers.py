@@ -1,4 +1,8 @@
+import pytest
+
 from places.serializers import RecomendatiosQuerySerializer
+
+pytestmark = pytest.mark.django_db
 
 
 def test_recomendations_query_serializer_accepts_required_coordinates():

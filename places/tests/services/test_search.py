@@ -1,8 +1,11 @@
+import pytest
 from chainmock import mocker
 
 from places.services.mappers import OpenStreetMapApiResponse
 from places.services.open_street_map import OpenStreetMapClient
 from places.services.search import PlaceSearchService
+
+pytestmark = pytest.mark.django_db
 
 
 def test_search_places_by_location_fetches_and_maps_payload():

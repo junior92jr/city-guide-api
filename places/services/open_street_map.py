@@ -3,11 +3,20 @@ from typing import ClassVar
 import httpx
 
 from django.conf import settings
-
-from places.exceptions import OpenStreetMapResourceUnavailable
+from rest_framework.exceptions import APIException
 
 from .cache import OpenStreetMapCache
 from .types import OpenStreetMapPayload, PlaceQueryParams
+
+
+class OpenStreetMapResourceUnavailable(APIException):
+    """
+    Raised when the OpenStreetMap service is unavailable or returns bad data.
+    """
+
+    status_code = 503
+    default_detail = "OpenStreetMap resource is not available."
+    default_code = "service_unavailable"
 
 
 class OpenStreetMapClient:
