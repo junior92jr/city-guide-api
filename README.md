@@ -108,7 +108,7 @@ $ git clone git@github.com:junior92jr/location-advisor-backend.git
 From the project root, sync the environment:
 
 ```bash
-uv sync
+make venv
 ```
 
 ### Setting up environment variables
@@ -144,7 +144,7 @@ DATABASE_URL=postgres://user:password@localhost:5432/city_guide
 Once you have everything ok, you can run the project.
 
 ```bash
-uv run python manage.py check
+make check
 
 uv run python manage.py migrate
 
@@ -156,7 +156,7 @@ uv run python manage.py runserver
 Tests are written with pytest.
 
 ```bash
-uv run pytest
+make test
 ```
 
 Run only the places tests:
@@ -165,10 +165,16 @@ Run only the places tests:
 uv run pytest places/tests
 ```
 
-Run Django's system check:
+Run formatters and automatic lint fixes:
 
 ```bash
-uv run python manage.py check
+make fix
+```
+
+Run linting and type checks:
+
+```bash
+make check
 ```
 
 # Build Documentation
