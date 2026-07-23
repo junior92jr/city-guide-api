@@ -6,8 +6,8 @@ from django.conf import settings
 from rest_framework.exceptions import APIException
 
 from . import cache
+from .categories import get_active_osm_category_tags
 
-CATEGORY_TAGS = ("amenity", "tourism", "shop", "leisure", "historic")
 TIMEOUT_IN_SECONDS = 10.0
 
 
@@ -84,9 +84,14 @@ def build_request_payload(query_params: PlaceQueryParams) -> dict[str, str]:
 
 
 def build_overpass_query(lat: float, lng: float, radius: int) -> str:
+    osm_tags = get_active_osm_category_tags()
+
+    if not osm_tags:
+        raise OpenStreetMapResourceUnavailable()
+
     filters = "\n".join(
-        f'  nwr(around:{radius},{lat},{lng})["{tag}"];'
-        for tag in CATEGORY_TAGS
+        f'  nwr(around:{radius},{lat},{lng})["{key}"="{value}"];'
+        for key, value in osm_tags
     )
 
     return f"""

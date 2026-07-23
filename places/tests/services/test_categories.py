@@ -2,6 +2,7 @@ import pytest
 
 from places.services.categories import (
     get_categories,
+    get_active_osm_category_tags,
     get_category_by_slug,
     get_category_from_tags,
 )
@@ -39,3 +40,10 @@ def test_get_category_from_tags_matches_osm_tag():
 
 def test_get_category_from_tags_returns_none_for_unknown_tags():
     assert get_category_from_tags({"amenity": "bench"}) is None
+
+
+def test_get_active_osm_category_tags_returns_known_osm_pairs():
+    tags = get_active_osm_category_tags()
+
+    assert ("amenity", "parking") in tags
+    assert ("historic", "wayside_shrine") in tags

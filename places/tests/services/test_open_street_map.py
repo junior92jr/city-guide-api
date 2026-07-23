@@ -7,6 +7,9 @@ from places.services import open_street_map
 from places.services.open_street_map import (
     OpenStreetMapResourceUnavailable,
 )
+from places.models import PlaceCategory
+
+pytestmark = pytest.mark.django_db
 
 
 def test_build_request_payload_uses_radius_parameter():
@@ -17,7 +20,7 @@ def test_build_request_payload_uses_radius_parameter():
     })
 
     assert "around:1000,50.1101038,8.6771586" in payload["data"]
-    assert '["amenity"]' in payload["data"]
+    assert '["amenity"="parking"]' in payload["data"]
 
 
 def test_build_request_payload_uses_request_radius():
@@ -28,6 +31,17 @@ def test_build_request_payload_uses_request_radius():
     })
 
     assert "around:250,50.1101038,8.6771586" in payload["data"]
+
+
+def test_build_request_payload_raises_when_no_categories_are_active():
+    PlaceCategory.objects.update(is_active=False)
+
+    with pytest.raises(OpenStreetMapResourceUnavailable):
+        open_street_map.build_request_payload({
+            "lat": 50.1101038,
+            "lng": 8.6771586,
+            "search_radious": 250,
+        })
 
 
 def test_headers_uses_configured_user_agent(settings):

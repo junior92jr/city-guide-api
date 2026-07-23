@@ -22,6 +22,13 @@ def get_category_from_tags(tags: dict[str, Any]) -> PlaceCategory | None:
     return None
 
 
+def get_active_osm_category_tags() -> list[tuple[str, str]]:
+    return [
+        (category.osm_key, category.osm_value)
+        for category in active_categories()
+    ]
+
+
 def active_categories():
     return PlaceCategory.objects.filter(is_active=True).order_by(
         "sort_order",
