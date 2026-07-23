@@ -20,8 +20,5 @@ def filter_places_by_category(
     category: str,
 ) -> OpenStreetMapApiResponse:
     return OpenStreetMapApiResponse(
-        places=[
-            place for place in response.places
-            if place.category == category
-        ]
+        places=[place for place in response.places if place.category == category]
     )

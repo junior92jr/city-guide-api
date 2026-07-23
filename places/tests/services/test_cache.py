@@ -4,16 +4,20 @@ from places.services import cache as open_street_map_cache
 
 
 def test_build_key_uses_location_and_radius():
-    first_key = open_street_map_cache.build_cache_key({
-        "lat": 50.1101038,
-        "lng": 8.6771586,
-        "search_radious": 500,
-    })
-    second_key = open_street_map_cache.build_cache_key({
-        "lat": 50.1101038,
-        "lng": 8.6771586,
-        "search_radious": 1000,
-    })
+    first_key = open_street_map_cache.build_cache_key(
+        {
+            "lat": 50.1101038,
+            "lng": 8.6771586,
+            "search_radious": 500,
+        }
+    )
+    second_key = open_street_map_cache.build_cache_key(
+        {
+            "lat": 50.1101038,
+            "lng": 8.6771586,
+            "search_radious": 1000,
+        }
+    )
 
     assert first_key != second_key
 

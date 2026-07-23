@@ -62,25 +62,27 @@ def test_open_street_map_api_response_maps_flat_places():
 
 
 def test_open_street_map_api_response_maps_optional_flat_fields():
-    response = OpenStreetMapApiResponse.from_api_response({
-        "elements": [
-            {
-                "type": "way",
-                "id": 1202107660,
-                "center": {"lat": 51.9419245, "lon": 6.9468494},
-                "tags": {
-                    "addr:city": "Gescher",
-                    "addr:housenumber": "41",
-                    "addr:postcode": "48712",
-                    "addr:street": "Estern",
-                    "amenity": "recycling",
-                    "name": "Wertstoffhof Gescher/Velen",
-                    "opening_hours": "Mo-Fr 08:00-16:30; Sa 08:00-13:00",
-                    "website": "https://www.egw.de",
-                },
-            }
-        ],
-    })
+    response = OpenStreetMapApiResponse.from_api_response(
+        {
+            "elements": [
+                {
+                    "type": "way",
+                    "id": 1202107660,
+                    "center": {"lat": 51.9419245, "lon": 6.9468494},
+                    "tags": {
+                        "addr:city": "Gescher",
+                        "addr:housenumber": "41",
+                        "addr:postcode": "48712",
+                        "addr:street": "Estern",
+                        "amenity": "recycling",
+                        "name": "Wertstoffhof Gescher/Velen",
+                        "opening_hours": "Mo-Fr 08:00-16:30; Sa 08:00-13:00",
+                        "website": "https://www.egw.de",
+                    },
+                }
+            ],
+        }
+    )
     place = response.places[0]
 
     assert place.name == "Wertstoffhof Gescher/Velen"
@@ -90,30 +92,34 @@ def test_open_street_map_api_response_maps_optional_flat_fields():
 
 
 def test_open_street_map_api_response_skips_elements_without_coordinates():
-    response = OpenStreetMapApiResponse.from_api_response({
-        "elements": [
-            {
-                "type": "relation",
-                "id": 19574608,
-                "tags": {"name": "No coordinates"},
-            }
-        ],
-    })
+    response = OpenStreetMapApiResponse.from_api_response(
+        {
+            "elements": [
+                {
+                    "type": "relation",
+                    "id": 19574608,
+                    "tags": {"name": "No coordinates"},
+                }
+            ],
+        }
+    )
 
     assert response.places == []
 
 
 def test_open_street_map_api_response_skips_unknown_categories():
-    response = OpenStreetMapApiResponse.from_api_response({
-        "elements": [
-            {
-                "type": "node",
-                "id": 242701473,
-                "lat": 51.941288,
-                "lon": 6.9474951,
-                "tags": {"amenity": "bench"},
-            }
-        ],
-    })
+    response = OpenStreetMapApiResponse.from_api_response(
+        {
+            "elements": [
+                {
+                    "type": "node",
+                    "id": 242701473,
+                    "lat": 51.941288,
+                    "lon": 6.9474951,
+                    "tags": {"amenity": "bench"},
+                }
+            ],
+        }
+    )
 
     assert response.places == []

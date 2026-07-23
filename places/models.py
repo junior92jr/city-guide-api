@@ -1,3 +1,5 @@
+from typing import override
+
 from django.db import models
 
 
@@ -11,7 +13,7 @@ class PlaceCategory(models.Model):
 
     class Meta:
         ordering = ("sort_order", "name")
-        constraints = [
+        constraints = [  # noqa: RUF012
             models.UniqueConstraint(
                 fields=("osm_key", "osm_value"),
                 name="unique_place_category_osm_tag",
@@ -20,5 +22,6 @@ class PlaceCategory(models.Model):
         verbose_name = "place category"
         verbose_name_plural = "place categories"
 
+    @override
     def __str__(self) -> str:
-        return self.name
+        return str(self.name)

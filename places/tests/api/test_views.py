@@ -3,8 +3,8 @@ from chainmock import mocker
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from places.services.mappers import OpenStreetMapApiResponse
 from places import views
+from places.services.mappers import OpenStreetMapApiResponse
 
 pytestmark = pytest.mark.django_db
 
@@ -20,30 +20,35 @@ def test_places_returns_mapped_open_street_map_response(api_client):
         "lng": 8.6771586,
         "search_radious": 1000,
     }
-    service_response = OpenStreetMapApiResponse.from_api_response({
-        "version": 0.6,
-        "generator": "Overpass API",
-        "elements": [
-            {
-                "type": "node",
-                "id": 331124761,
-                "lat": 51.9322712,
-                "lon": 6.9442418,
-                "tags": {
-                    "historic": "wayside_shrine",
-                    "name": "Heiliger Ludgerus",
+    service_response = OpenStreetMapApiResponse.from_api_response(
+        {
+            "version": 0.6,
+            "generator": "Overpass API",
+            "elements": [
+                {
+                    "type": "node",
+                    "id": 331124761,
+                    "lat": 51.9322712,
+                    "lon": 6.9442418,
+                    "tags": {
+                        "historic": "wayside_shrine",
+                        "name": "Heiliger Ludgerus",
+                    },
                 },
-            },
-        ],
-    })
-    mocker(views).mock(
-        "search_places_by_location"
-    ).called_once_with(query_params).return_value(service_response)
+            ],
+        }
+    )
+    mocker(views).mock("search_places_by_location").called_once_with(
+        query_params
+    ).return_value(service_response)
 
-    response = api_client.get("/api/v1/places/", {
-        "lat": "50.1101038",
-        "lng": "8.6771586",
-    })
+    response = api_client.get(
+        "/api/v1/places/",
+        {
+            "lat": "50.1101038",
+            "lng": "8.6771586",
+        },
+    )
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {
@@ -68,18 +73,23 @@ def test_places_passes_optional_radius_to_search_service(api_client):
         "lng": 8.6771586,
         "search_radious": 250,
     }
-    service_response = OpenStreetMapApiResponse.from_api_response({
-        "elements": [],
-    })
-    mocker(views).mock(
-        "search_places_by_location"
-    ).called_once_with(query_params).return_value(service_response)
+    service_response = OpenStreetMapApiResponse.from_api_response(
+        {
+            "elements": [],
+        }
+    )
+    mocker(views).mock("search_places_by_location").called_once_with(
+        query_params
+    ).return_value(service_response)
 
-    response = api_client.get("/api/v1/places/", {
-        "lat": "50.1101038",
-        "lng": "8.6771586",
-        "search_radious": "250",
-    })
+    response = api_client.get(
+        "/api/v1/places/",
+        {
+            "lat": "50.1101038",
+            "lng": "8.6771586",
+            "search_radious": "250",
+        },
+    )
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {"places": []}
@@ -88,10 +98,13 @@ def test_places_passes_optional_radius_to_search_service(api_client):
 def test_places_returns_bad_request_for_invalid_query_params(api_client):
     mocker(views).mock("search_places_by_location").not_called()
 
-    response = api_client.get("/api/v1/places/", {
-        "lat": "not-a-float",
-        "lng": "8.6771586",
-    })
+    response = api_client.get(
+        "/api/v1/places/",
+        {
+            "lat": "not-a-float",
+            "lng": "8.6771586",
+        },
+    )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert "lat" in response.json()
@@ -104,18 +117,23 @@ def test_places_passes_optional_category_to_search_service(api_client):
         "search_radious": 1000,
         "category": "parking",
     }
-    service_response = OpenStreetMapApiResponse.from_api_response({
-        "elements": [],
-    })
-    mocker(views).mock(
-        "search_places_by_location"
-    ).called_once_with(query_params).return_value(service_response)
+    service_response = OpenStreetMapApiResponse.from_api_response(
+        {
+            "elements": [],
+        }
+    )
+    mocker(views).mock("search_places_by_location").called_once_with(
+        query_params
+    ).return_value(service_response)
 
-    response = api_client.get("/api/v1/places/", {
-        "lat": "50.1101038",
-        "lng": "8.6771586",
-        "category": "parking",
-    })
+    response = api_client.get(
+        "/api/v1/places/",
+        {
+            "lat": "50.1101038",
+            "lng": "8.6771586",
+            "category": "parking",
+        },
+    )
 
     assert response.status_code == status.HTTP_200_OK
 

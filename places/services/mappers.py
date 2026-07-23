@@ -1,6 +1,6 @@
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, computed_field
+from pydantic import BaseModel, ConfigDict, Field
 
 from places.models import PlaceCategory
 
@@ -46,6 +46,7 @@ class OpenStreetMapPlace(BaseModel):
     longitude: float
     category: str
     category_name: str
+    osm_uid: str
     address: str | None = None
     website: str | None = None
     opening_hours: str | None = None
@@ -60,9 +61,7 @@ class OpenStreetMapPlace(BaseModel):
 
         if element.center is not None:
             latitude = latitude if latitude is not None else element.center.lat
-            longitude = (
-                longitude if longitude is not None else element.center.lon
-            )
+            longitude = longitude if longitude is not None else element.center.lon
 
         if latitude is None or longitude is None:
             return None
@@ -83,10 +82,9 @@ class OpenStreetMapPlace(BaseModel):
             longitude=longitude,
             category=category.slug,
             category_name=category.name,
+            osm_uid=f"osm-{element.type}-{element.id}",
             address=cls.address_from_tags(element.tags),
-            website=element.tags.get("website") or element.tags.get(
-                "contact:website"
-            ),
+            website=element.tags.get("website") or element.tags.get("contact:website"),
             opening_hours=element.tags.get("opening_hours"),
         )
 
@@ -106,9 +104,7 @@ class OpenStreetMapPlace(BaseModel):
     @classmethod
     def address_from_tags(cls, tags: dict[str, Any]) -> str | None:
         direct_address = (
-            tags.get("addr:full")
-            or tags.get("memorial:addr")
-            or tags.get("addr:place")
+            tags.get("addr:full") or tags.get("memorial:addr") or tags.get("addr:place")
         )
 
         if direct_address:
@@ -123,11 +119,6 @@ class OpenStreetMapPlace(BaseModel):
         address = ", ".join(str(part) for part in address_parts if part)
 
         return address or None
-
-    @computed_field
-    @property
-    def osm_uid(self) -> str:
-        return f"osm-{self.osm_type}-{self.osm_id}"
 
 
 class OpenStreetMapApiResponse(BaseModel):

@@ -1,8 +1,8 @@
 import pytest
 
 from places.services.categories import (
-    get_categories,
     get_active_osm_category_tags,
+    get_categories,
     get_category_by_slug,
     get_category_from_tags,
 )

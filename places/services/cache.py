@@ -1,4 +1,5 @@
 import hashlib
+from collections.abc import Mapping
 from typing import Any, cast
 
 from django.conf import settings
@@ -6,7 +7,7 @@ from django.core.cache import cache
 
 
 def get_payload(
-    query_params: dict[str, Any],
+    query_params: Mapping[str, Any],
 ) -> dict[str, Any] | None:
     if settings.CACHE_TIMEOUT_IN_SECS == 0:
         return None
@@ -20,7 +21,7 @@ def get_payload(
 
 
 def set_payload(
-    query_params: dict[str, Any],
+    query_params: Mapping[str, Any],
     payload: dict[str, Any],
 ) -> None:
     if settings.CACHE_TIMEOUT_IN_SECS == 0:
@@ -33,7 +34,7 @@ def set_payload(
     )
 
 
-def build_cache_key(query_params: dict[str, Any]) -> str:
+def build_cache_key(query_params: Mapping[str, Any]) -> str:
     cache_key = (
         "open-street-map-"
         f"{query_params['lat']}-"

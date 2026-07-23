@@ -1,3 +1,5 @@
+from typing import Any
+
 from rest_framework import serializers
 
 from .services.categories import get_category_by_slug
@@ -5,7 +7,7 @@ from .services.categories import get_category_by_slug
 DEFAULT_SEARCH_RADIOUS = 1000
 
 
-class RecomendatiosQuerySerializer(serializers.Serializer):
+class RecomendatiosQuerySerializer(serializers.Serializer[dict[str, Any]]):
     """
     Serializer that handle validation for the request parameters.
     """
@@ -18,7 +20,7 @@ class RecomendatiosQuerySerializer(serializers.Serializer):
     )
     category = serializers.CharField(required=False)
 
-    def validate_category(self, value):
+    def validate_category(self, value: str) -> str:
         if get_category_by_slug(value) is None:
             raise serializers.ValidationError("Unknown category.")
 

@@ -3,12 +3,13 @@ from chainmock import mocker
 
 from places.services import search
 from places.services.mappers import OpenStreetMapApiResponse
+from places.services.open_street_map import PlaceQueryParams
 
 pytestmark = pytest.mark.django_db
 
 
 def test_search_places_by_location_fetches_and_maps_payload():
-    query_params = {
+    query_params: PlaceQueryParams = {
         "lat": 50.1101038,
         "lng": 8.6771586,
         "search_radious": 1000,
@@ -28,9 +29,9 @@ def test_search_places_by_location_fetches_and_maps_payload():
             }
         ],
     }
-    mocker(search).mock(
-        "fetch_places_payload"
-    ).called_once_with(query_params).return_value(payload)
+    mocker(search).mock("fetch_places_payload").called_once_with(
+        query_params
+    ).return_value(payload)
 
     response = search.search_places_by_location(query_params)
 
@@ -40,7 +41,7 @@ def test_search_places_by_location_fetches_and_maps_payload():
 
 
 def test_search_places_by_location_filters_by_category():
-    query_params = {
+    query_params: PlaceQueryParams = {
         "lat": 50.1101038,
         "lng": 8.6771586,
         "search_radious": 1000,
@@ -63,9 +64,9 @@ def test_search_places_by_location_filters_by_category():
             },
         ],
     }
-    mocker(search).mock(
-        "fetch_places_payload"
-    ).called_once_with(query_params).return_value(payload)
+    mocker(search).mock("fetch_places_payload").called_once_with(
+        query_params
+    ).return_value(payload)
 
     response = search.search_places_by_location(query_params)
 

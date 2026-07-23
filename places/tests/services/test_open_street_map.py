@@ -2,33 +2,38 @@ import httpx
 import pytest
 from chainmock import mocker
 
+from places.models import PlaceCategory
 from places.services import cache as open_street_map_cache
 from places.services import open_street_map
 from places.services.open_street_map import (
     OpenStreetMapResourceUnavailable,
+    PlaceQueryParams,
 )
-from places.models import PlaceCategory
 
 pytestmark = pytest.mark.django_db
 
 
 def test_build_request_payload_uses_radius_parameter():
-    payload = open_street_map.build_request_payload({
-        "lat": 50.1101038,
-        "lng": 8.6771586,
-        "search_radious": 1000,
-    })
+    payload = open_street_map.build_request_payload(
+        {
+            "lat": 50.1101038,
+            "lng": 8.6771586,
+            "search_radious": 1000,
+        }
+    )
 
     assert "around:1000,50.1101038,8.6771586" in payload["data"]
     assert '["amenity"="parking"]' in payload["data"]
 
 
 def test_build_request_payload_uses_request_radius():
-    payload = open_street_map.build_request_payload({
-        "lat": 50.1101038,
-        "lng": 8.6771586,
-        "search_radious": 250,
-    })
+    payload = open_street_map.build_request_payload(
+        {
+            "lat": 50.1101038,
+            "lng": 8.6771586,
+            "search_radious": 250,
+        }
+    )
 
     assert "around:250,50.1101038,8.6771586" in payload["data"]
 
@@ -37,11 +42,13 @@ def test_build_request_payload_raises_when_no_categories_are_active():
     PlaceCategory.objects.update(is_active=False)
 
     with pytest.raises(OpenStreetMapResourceUnavailable):
-        open_street_map.build_request_payload({
-            "lat": 50.1101038,
-            "lng": 8.6771586,
-            "search_radious": 250,
-        })
+        open_street_map.build_request_payload(
+            {
+                "lat": 50.1101038,
+                "lng": 8.6771586,
+                "search_radious": 250,
+            }
+        )
 
 
 def test_headers_uses_configured_user_agent(settings):
@@ -64,11 +71,16 @@ def test_request_places_calls_overpass(settings):
 
     mocker(open_street_map.httpx).mock("get").called_once().return_value(response)
 
-    assert open_street_map.request_places({
-        "lat": 50.1101038,
-        "lng": 8.6771586,
-        "search_radious": 1000,
-    }) == response
+    assert (
+        open_street_map.request_places(
+            {
+                "lat": 50.1101038,
+                "lng": 8.6771586,
+                "search_radious": 1000,
+            }
+        )
+        == response
+    )
 
 
 def test_request_places_raises_service_unavailable_for_request_errors():
@@ -78,15 +90,17 @@ def test_request_places_raises_service_unavailable_for_request_errors():
     )
 
     with pytest.raises(OpenStreetMapResourceUnavailable):
-        open_street_map.request_places({
-            "lat": 50.1101038,
-            "lng": 8.6771586,
-            "search_radious": 1000,
-        })
+        open_street_map.request_places(
+            {
+                "lat": 50.1101038,
+                "lng": 8.6771586,
+                "search_radious": 1000,
+            }
+        )
 
 
 def test_fetch_places_payload_returns_cached_payload():
-    query_params = {
+    query_params: PlaceQueryParams = {
         "lat": 50.1101038,
         "lng": 8.6771586,
         "search_radious": 1000,
@@ -101,7 +115,7 @@ def test_fetch_places_payload_returns_cached_payload():
 
 
 def test_fetch_places_payload_caches_successful_payload():
-    query_params = {
+    query_params: PlaceQueryParams = {
         "lat": 50.1101038,
         "lng": 8.6771586,
         "search_radious": 1000,
@@ -132,11 +146,13 @@ def test_fetch_places_payload_raises_service_unavailable_for_error_status():
     mocker(open_street_map).mock("request_places").return_value(response)
 
     with pytest.raises(OpenStreetMapResourceUnavailable):
-        open_street_map.fetch_places_payload({
-            "lat": 50.1101038,
-            "lng": 8.6771586,
-            "search_radious": 1000,
-        })
+        open_street_map.fetch_places_payload(
+            {
+                "lat": 50.1101038,
+                "lng": 8.6771586,
+                "search_radious": 1000,
+            }
+        )
 
 
 def test_fetch_places_payload_raises_service_unavailable_for_non_object_json():
@@ -149,8 +165,10 @@ def test_fetch_places_payload_raises_service_unavailable_for_non_object_json():
     mocker(open_street_map).mock("request_places").return_value(response)
 
     with pytest.raises(OpenStreetMapResourceUnavailable):
-        open_street_map.fetch_places_payload({
-            "lat": 50.1101038,
-            "lng": 8.6771586,
-            "search_radious": 1000,
-        })
+        open_street_map.fetch_places_payload(
+            {
+                "lat": 50.1101038,
+                "lng": 8.6771586,
+                "search_radious": 1000,
+            }
+        )

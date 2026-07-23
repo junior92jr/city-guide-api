@@ -1,6 +1,5 @@
 from django.db import migrations
 
-
 PLACE_CATEGORIES = (
     ("bar", "Bar", "amenity", "bar"),
     ("cafe", "Cafe", "amenity", "cafe"),
@@ -35,9 +34,7 @@ PLACE_CATEGORIES = (
 def seed_place_categories(apps, schema_editor):
     place_category = apps.get_model("places", "PlaceCategory")
 
-    for sort_order, (slug, name, osm_key, osm_value) in enumerate(
-        PLACE_CATEGORIES
-    ):
+    for sort_order, (slug, name, osm_key, osm_value) in enumerate(PLACE_CATEGORIES):
         place_category.objects.update_or_create(
             slug=slug,
             defaults={
@@ -58,11 +55,11 @@ def remove_place_categories(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [
+    dependencies = [  # noqa: RUF012
         ("places", "0001_initial"),
     ]
 
-    operations = [
+    operations = [  # noqa: RUF012
         migrations.RunPython(
             seed_place_categories,
             reverse_code=remove_place_categories,

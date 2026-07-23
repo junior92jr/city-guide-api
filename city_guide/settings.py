@@ -2,7 +2,6 @@ from pathlib import Path
 
 import environ
 
-
 # Paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -36,7 +35,7 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
 
-CACHE_LOCATION = Path(env("CACHE_LOCATION"))
+CACHE_LOCATION = Path(str(env("CACHE_LOCATION")))
 if not CACHE_LOCATION.is_absolute():
     CACHE_LOCATION = BASE_DIR / CACHE_LOCATION
 
@@ -109,27 +108,17 @@ CACHES = {
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": (
-            "django.contrib.auth.password_validation."
-            "UserAttributeSimilarityValidator"
+            "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
         ),
     },
     {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "MinimumLengthValidator"
-        ),
+        "NAME": ("django.contrib.auth.password_validation.MinimumLengthValidator"),
     },
     {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "CommonPasswordValidator"
-        ),
+        "NAME": ("django.contrib.auth.password_validation.CommonPasswordValidator"),
     },
     {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "NumericPasswordValidator"
-        ),
+        "NAME": ("django.contrib.auth.password_validation.NumericPasswordValidator"),
     },
 ]
 
@@ -152,9 +141,7 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": (
-            "django.contrib.staticfiles.storage.StaticFilesStorage"
-        ),
+        "BACKEND": ("django.contrib.staticfiles.storage.StaticFilesStorage"),
     },
 }
 

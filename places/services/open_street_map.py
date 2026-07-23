@@ -1,7 +1,6 @@
 from typing import Any, NotRequired, TypedDict
 
 import httpx
-
 from django.conf import settings
 from rest_framework.exceptions import APIException
 
