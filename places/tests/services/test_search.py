@@ -12,7 +12,7 @@ def test_search_places_by_location_fetches_and_maps_payload():
     query_params: PlaceQueryParams = {
         "lat": 50.1101038,
         "lng": 8.6771586,
-        "search_radious": 1000,
+        "search_radius": 1000,
     }
     payload = {
         "version": 0.6,
@@ -44,7 +44,7 @@ def test_search_places_by_location_filters_by_category():
     query_params: PlaceQueryParams = {
         "lat": 50.1101038,
         "lng": 8.6771586,
-        "search_radious": 1000,
+        "search_radius": 1000,
         "category": "parking",
     }
     payload = {

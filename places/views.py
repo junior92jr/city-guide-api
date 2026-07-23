@@ -1,22 +1,23 @@
-from typing import Any, cast
+from typing import Any, cast, override
 
-from rest_framework import viewsets
+from django.db.models import QuerySet
+from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from .serializers import RecomendatiosQuerySerializer
-from .services import get_categories, search_places_by_location
-from .services.open_street_map import PlaceQueryParams
+from .models import PlaceCategory
+from .serializers import CategorySerializer, RecommendationsQuerySerializer
+from .services import search_places_by_location
 
 
-class RecomendationViewSet(viewsets.GenericViewSet[Any]):
+class RecommendationViewSet(viewsets.GenericViewSet[Any]):
     """
     ViewSet that exposes OpenStreetMap place data.
     """
 
-    serializer_class = RecomendatiosQuerySerializer
+    serializer_class = RecommendationsQuerySerializer
     permission_classes = (AllowAny,)
     queryset = None
 
@@ -26,21 +27,28 @@ class RecomendationViewSet(viewsets.GenericViewSet[Any]):
         Retrieve places near a location from OpenStreetMap.
         """
 
-        response = search_places_by_location(self.get_query_params(request))
+        serializer = cast(
+            RecommendationsQuerySerializer,
+            self.get_serializer(data=request.query_params),
+        )
+        serializer.is_valid(raise_exception=True)
+
+        response = search_places_by_location(serializer.to_query_params())
 
         return Response(response.model_dump(by_alias=True, exclude_none=True))
 
-    @action(methods=["get"], url_path=r"categories", detail=False)
-    def categories(self, request: Request) -> Response:
-        """
-        Retrieve the known categories supported by the places API.
-        """
 
-        return Response({"categories": get_categories()})
+class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet[PlaceCategory]):
+    """
+    ViewSet that exposes active place categories.
+    """
 
-    def get_query_params(self, request: Request) -> PlaceQueryParams:
-        serializer = RecomendatiosQuerySerializer(data=request.query_params)
+    serializer_class = CategorySerializer
+    permission_classes = (AllowAny,)
 
-        serializer.is_valid(raise_exception=True)
-
-        return cast(PlaceQueryParams, serializer.validated_data)
+    @override
+    def get_queryset(self) -> QuerySet[PlaceCategory]:
+        return PlaceCategory.objects.filter(is_active=True).order_by(
+            "sort_order",
+            "name",
+        )

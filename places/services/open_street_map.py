@@ -13,7 +13,7 @@ TIMEOUT_IN_SECONDS = 10.0
 class PlaceQueryParams(TypedDict):
     lat: float
     lng: float
-    search_radious: int
+    search_radius: int
     category: NotRequired[str]
 
 
@@ -77,7 +77,7 @@ def build_request_payload(query_params: PlaceQueryParams) -> dict[str, str]:
         "data": build_overpass_query(
             lat=query_params["lat"],
             lng=query_params["lng"],
-            radius=query_params["search_radious"],
+            radius=query_params["search_radius"],
         )
     }
 

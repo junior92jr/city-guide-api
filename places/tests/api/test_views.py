@@ -18,7 +18,7 @@ def test_places_returns_mapped_open_street_map_response(api_client):
     query_params = {
         "lat": 50.1101038,
         "lng": 8.6771586,
-        "search_radious": 1000,
+        "search_radius": 1000,
     }
     service_response = OpenStreetMapApiResponse.from_api_response(
         {
@@ -71,7 +71,7 @@ def test_places_passes_optional_radius_to_search_service(api_client):
     query_params = {
         "lat": 50.1101038,
         "lng": 8.6771586,
-        "search_radious": 250,
+        "search_radius": 250,
     }
     service_response = OpenStreetMapApiResponse.from_api_response(
         {
@@ -87,7 +87,7 @@ def test_places_passes_optional_radius_to_search_service(api_client):
         {
             "lat": "50.1101038",
             "lng": "8.6771586",
-            "search_radious": "250",
+            "search_radius": "250",
         },
     )
 
@@ -114,7 +114,7 @@ def test_places_passes_optional_category_to_search_service(api_client):
     query_params = {
         "lat": 50.1101038,
         "lng": 8.6771586,
-        "search_radious": 1000,
+        "search_radius": 1000,
         "category": "parking",
     }
     service_response = OpenStreetMapApiResponse.from_api_response(
@@ -142,7 +142,7 @@ def test_categories_endpoint_returns_known_categories(api_client):
     response = api_client.get("/api/v1/categories/")
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json()["categories"][3] == {
+    assert response.json()[3] == {
         "slug": "parking",
         "name": "Parking",
     }

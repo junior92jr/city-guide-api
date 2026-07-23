@@ -18,7 +18,7 @@ def test_build_request_payload_uses_radius_parameter():
         {
             "lat": 50.1101038,
             "lng": 8.6771586,
-            "search_radious": 1000,
+            "search_radius": 1000,
         }
     )
 
@@ -31,7 +31,7 @@ def test_build_request_payload_uses_request_radius():
         {
             "lat": 50.1101038,
             "lng": 8.6771586,
-            "search_radious": 250,
+            "search_radius": 250,
         }
     )
 
@@ -46,7 +46,7 @@ def test_build_request_payload_raises_when_no_categories_are_active():
             {
                 "lat": 50.1101038,
                 "lng": 8.6771586,
-                "search_radious": 250,
+                "search_radius": 250,
             }
         )
 
@@ -76,7 +76,7 @@ def test_request_places_calls_overpass(settings):
             {
                 "lat": 50.1101038,
                 "lng": 8.6771586,
-                "search_radious": 1000,
+                "search_radius": 1000,
             }
         )
         == response
@@ -94,7 +94,7 @@ def test_request_places_raises_service_unavailable_for_request_errors():
             {
                 "lat": 50.1101038,
                 "lng": 8.6771586,
-                "search_radious": 1000,
+                "search_radius": 1000,
             }
         )
 
@@ -103,7 +103,7 @@ def test_fetch_places_payload_returns_cached_payload():
     query_params: PlaceQueryParams = {
         "lat": 50.1101038,
         "lng": 8.6771586,
-        "search_radious": 1000,
+        "search_radius": 1000,
     }
     payload = {"elements": []}
     mocker(open_street_map_cache).mock("get_payload").called_once_with(
@@ -118,7 +118,7 @@ def test_fetch_places_payload_caches_successful_payload():
     query_params: PlaceQueryParams = {
         "lat": 50.1101038,
         "lng": 8.6771586,
-        "search_radious": 1000,
+        "search_radius": 1000,
     }
     payload = {"elements": []}
     response = httpx.Response(
@@ -150,7 +150,7 @@ def test_fetch_places_payload_raises_service_unavailable_for_error_status():
             {
                 "lat": 50.1101038,
                 "lng": 8.6771586,
-                "search_radious": 1000,
+                "search_radius": 1000,
             }
         )
 
@@ -169,6 +169,6 @@ def test_fetch_places_payload_raises_service_unavailable_for_non_object_json():
             {
                 "lat": 50.1101038,
                 "lng": 8.6771586,
-                "search_radious": 1000,
+                "search_radius": 1000,
             }
         )

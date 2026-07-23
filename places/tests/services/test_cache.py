@@ -8,14 +8,14 @@ def test_build_key_uses_location_and_radius():
         {
             "lat": 50.1101038,
             "lng": 8.6771586,
-            "search_radious": 500,
+            "search_radius": 500,
         }
     )
     second_key = open_street_map_cache.build_cache_key(
         {
             "lat": 50.1101038,
             "lng": 8.6771586,
-            "search_radious": 1000,
+            "search_radius": 1000,
         }
     )
 
@@ -27,7 +27,7 @@ def test_get_payload_returns_none_when_cache_is_disabled(settings):
     query_params = {
         "lat": 50.1101038,
         "lng": 8.6771586,
-        "search_radious": 1000,
+        "search_radius": 1000,
     }
     cache.set(
         open_street_map_cache.build_cache_key(query_params),
@@ -42,7 +42,7 @@ def test_set_and_get_payload(settings):
     query_params = {
         "lat": 50.1101038,
         "lng": 8.6771586,
-        "search_radious": 1000,
+        "search_radius": 1000,
     }
     payload = {"elements": [{"type": "node", "id": 1}]}
 

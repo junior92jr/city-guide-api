@@ -1,13 +1,12 @@
 from rest_framework.routers import DefaultRouter
 
-from .views import RecomendationViewSet
+from .views import CategoryViewSet, RecommendationViewSet
 
 app_name = "places"
 
 router = DefaultRouter()
 
-router.register("", RecomendationViewSet, basename="recomendations_app_url")
+router.register("categories", CategoryViewSet, basename="categories")
+router.register("", RecommendationViewSet, basename="places")
 
-urlpatterns = []
-
-urlpatterns += router.urls
+urlpatterns = router.urls

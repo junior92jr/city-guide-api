@@ -1,12 +1,12 @@
 import pytest
 
-from places.serializers import RecomendatiosQuerySerializer
+from places.serializers import RecommendationsQuerySerializer
 
 pytestmark = pytest.mark.django_db
 
 
-def test_recomendations_query_serializer_accepts_required_coordinates():
-    serializer = RecomendatiosQuerySerializer(
+def test_recommendations_query_serializer_accepts_required_coordinates():
+    serializer = RecommendationsQuerySerializer(
         data={
             "lat": "50.1101038",
             "lng": "8.6771586",
@@ -14,34 +14,65 @@ def test_recomendations_query_serializer_accepts_required_coordinates():
     )
 
     assert serializer.is_valid()
-    assert serializer.validated_data == {
+    assert serializer.to_query_params() == {
         "lat": 50.1101038,
         "lng": 8.6771586,
-        "search_radious": 1000,
+        "search_radius": 1000,
     }
 
 
-def test_recomendations_query_serializer_accepts_optional_filters():
-    serializer = RecomendatiosQuerySerializer(
+def test_recommendations_query_serializer_accepts_optional_filters():
+    serializer = RecommendationsQuerySerializer(
         data={
             "lat": "50.1101038",
             "lng": "8.6771586",
-            "search_radious": "250",
+            "search_radius": "250",
             "category": "parking",
         }
     )
 
     assert serializer.is_valid()
-    assert serializer.validated_data == {
+    assert serializer.to_query_params() == {
         "lat": 50.1101038,
         "lng": 8.6771586,
-        "search_radious": 250,
+        "search_radius": 250,
         "category": "parking",
     }
 
 
-def test_recomendations_query_serializer_requires_coordinates():
-    serializer = RecomendatiosQuerySerializer(
+def test_recommendations_query_serializer_accepts_legacy_radius_alias():
+    serializer = RecommendationsQuerySerializer(
+        data={
+            "lat": "50.1101038",
+            "lng": "8.6771586",
+            "search_radious": "250",
+        }
+    )
+
+    assert serializer.is_valid()
+    assert serializer.to_query_params() == {
+        "lat": 50.1101038,
+        "lng": 8.6771586,
+        "search_radius": 250,
+    }
+
+
+def test_recommendations_query_serializer_rejects_conflicting_radius_values():
+    serializer = RecommendationsQuerySerializer(
+        data={
+            "lat": "50.1101038",
+            "lng": "8.6771586",
+            "search_radius": "250",
+            "search_radious": "500",
+        }
+    )
+
+    assert not serializer.is_valid()
+    assert "search_radius" in serializer.errors
+
+
+def test_recommendations_query_serializer_requires_coordinates():
+    serializer = RecommendationsQuerySerializer(
         data={
             "lat": "50.1101038",
         }
@@ -51,8 +82,8 @@ def test_recomendations_query_serializer_requires_coordinates():
     assert "lng" in serializer.errors
 
 
-def test_recomendations_query_serializer_rejects_invalid_coordinates():
-    serializer = RecomendatiosQuerySerializer(
+def test_recommendations_query_serializer_rejects_invalid_coordinates():
+    serializer = RecommendationsQuerySerializer(
         data={
             "lat": "not-a-float",
             "lng": "8.6771586",
@@ -63,8 +94,8 @@ def test_recomendations_query_serializer_rejects_invalid_coordinates():
     assert "lat" in serializer.errors
 
 
-def test_recomendations_query_serializer_rejects_unknown_category():
-    serializer = RecomendatiosQuerySerializer(
+def test_recommendations_query_serializer_rejects_unknown_category():
+    serializer = RecommendationsQuerySerializer(
         data={
             "lat": "50.1101038",
             "lng": "8.6771586",
