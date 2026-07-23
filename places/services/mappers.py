@@ -2,7 +2,9 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field
 
-from .categories import PlaceCategory, get_category_from_tags
+from places.models import PlaceCategory
+
+from .categories import get_category_from_tags
 
 
 class OpenStreetMapMetadata(BaseModel):

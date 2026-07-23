@@ -1,15 +1,15 @@
 from django.core.cache import cache
 
-from places.services.cache import OpenStreetMapCache
+from places.services import cache as open_street_map_cache
 
 
 def test_build_key_uses_location_and_radius():
-    first_key = OpenStreetMapCache.build_key({
+    first_key = open_street_map_cache.build_cache_key({
         "lat": 50.1101038,
         "lng": 8.6771586,
         "search_radious": 500,
     })
-    second_key = OpenStreetMapCache.build_key({
+    second_key = open_street_map_cache.build_cache_key({
         "lat": 50.1101038,
         "lng": 8.6771586,
         "search_radious": 1000,
@@ -25,9 +25,12 @@ def test_get_payload_returns_none_when_cache_is_disabled(settings):
         "lng": 8.6771586,
         "search_radious": 1000,
     }
-    cache.set(OpenStreetMapCache.build_key(query_params), {"elements": []})
+    cache.set(
+        open_street_map_cache.build_cache_key(query_params),
+        {"elements": []},
+    )
 
-    assert OpenStreetMapCache.get_payload(query_params) is None
+    assert open_street_map_cache.get_payload(query_params) is None
 
 
 def test_set_and_get_payload(settings):
@@ -39,6 +42,6 @@ def test_set_and_get_payload(settings):
     }
     payload = {"elements": [{"type": "node", "id": 1}]}
 
-    OpenStreetMapCache.set_payload(query_params, payload)
+    open_street_map_cache.set_payload(query_params, payload)
 
-    assert OpenStreetMapCache.get_payload(query_params) == payload
+    assert open_street_map_cache.get_payload(query_params) == payload

@@ -1,5 +1,3 @@
-from typing import cast
-
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
@@ -7,8 +5,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from .serializers import RecomendatiosQuerySerializer
-from .services import PlaceSearchService, get_categories
-from .services.types import PlaceQueryParams
+from .services import get_categories, search_places_by_location
 
 
 class RecomendationViewSet(viewsets.GenericViewSet):
@@ -26,9 +23,7 @@ class RecomendationViewSet(viewsets.GenericViewSet):
         Retrieve places near a location from OpenStreetMap.
         """
 
-        response = PlaceSearchService.search_places_by_location(
-            self.get_query_params(request)
-        )
+        response = search_places_by_location(self.get_query_params(request))
 
         return Response(response.model_dump(by_alias=True, exclude_none=True))
 
@@ -40,9 +35,9 @@ class RecomendationViewSet(viewsets.GenericViewSet):
 
         return Response({"categories": get_categories()})
 
-    def get_query_params(self, request: Request) -> PlaceQueryParams:
+    def get_query_params(self, request: Request) -> dict:
         serializer = self.serializer_class(data=request.query_params)
 
         serializer.is_valid(raise_exception=True)
 
-        return cast(PlaceQueryParams, serializer.validated_data)
+        return serializer.validated_data

@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from places.services.mappers import OpenStreetMapApiResponse
-from places.views import PlaceSearchService
+from places import views
 
 pytestmark = pytest.mark.django_db
 
@@ -36,7 +36,7 @@ def test_places_returns_mapped_open_street_map_response(api_client):
             },
         ],
     })
-    mocker(PlaceSearchService).mock(
+    mocker(views).mock(
         "search_places_by_location"
     ).called_once_with(query_params).return_value(service_response)
 
@@ -71,7 +71,7 @@ def test_places_passes_optional_radius_to_search_service(api_client):
     service_response = OpenStreetMapApiResponse.from_api_response({
         "elements": [],
     })
-    mocker(PlaceSearchService).mock(
+    mocker(views).mock(
         "search_places_by_location"
     ).called_once_with(query_params).return_value(service_response)
 
@@ -86,7 +86,7 @@ def test_places_passes_optional_radius_to_search_service(api_client):
 
 
 def test_places_returns_bad_request_for_invalid_query_params(api_client):
-    mocker(PlaceSearchService).mock("search_places_by_location").not_called()
+    mocker(views).mock("search_places_by_location").not_called()
 
     response = api_client.get("/api/v1/places/", {
         "lat": "not-a-float",
@@ -107,7 +107,7 @@ def test_places_passes_optional_category_to_search_service(api_client):
     service_response = OpenStreetMapApiResponse.from_api_response({
         "elements": [],
     })
-    mocker(PlaceSearchService).mock(
+    mocker(views).mock(
         "search_places_by_location"
     ).called_once_with(query_params).return_value(service_response)
 

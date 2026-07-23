@@ -2,16 +2,15 @@ import httpx
 import pytest
 from chainmock import mocker
 
+from places.services import cache as open_street_map_cache
 from places.services import open_street_map
-from places.services.cache import OpenStreetMapCache
 from places.services.open_street_map import (
-    OpenStreetMapClient,
     OpenStreetMapResourceUnavailable,
 )
 
 
 def test_build_request_payload_uses_radius_parameter():
-    payload = OpenStreetMapClient.build_request_payload({
+    payload = open_street_map.build_request_payload({
         "lat": 50.1101038,
         "lng": 8.6771586,
         "search_radious": 1000,
@@ -22,7 +21,7 @@ def test_build_request_payload_uses_radius_parameter():
 
 
 def test_build_request_payload_uses_request_radius():
-    payload = OpenStreetMapClient.build_request_payload({
+    payload = open_street_map.build_request_payload({
         "lat": 50.1101038,
         "lng": 8.6771586,
         "search_radious": 250,
@@ -34,7 +33,7 @@ def test_build_request_payload_uses_request_radius():
 def test_headers_uses_configured_user_agent(settings):
     settings.OPEN_STREET_MAP_USER_AGENT = "city-guide-tests"
 
-    assert OpenStreetMapClient.headers() == {
+    assert open_street_map.headers() == {
         "Accept": "application/json",
         "User-Agent": "city-guide-tests",
     }
@@ -51,7 +50,7 @@ def test_request_places_calls_overpass(settings):
 
     mocker(open_street_map.httpx).mock("get").called_once().return_value(response)
 
-    assert OpenStreetMapClient.request_places({
+    assert open_street_map.request_places({
         "lat": 50.1101038,
         "lng": 8.6771586,
         "search_radious": 1000,
@@ -65,7 +64,7 @@ def test_request_places_raises_service_unavailable_for_request_errors():
     )
 
     with pytest.raises(OpenStreetMapResourceUnavailable):
-        OpenStreetMapClient.request_places({
+        open_street_map.request_places({
             "lat": 50.1101038,
             "lng": 8.6771586,
             "search_radious": 1000,
@@ -79,12 +78,12 @@ def test_fetch_places_payload_returns_cached_payload():
         "search_radious": 1000,
     }
     payload = {"elements": []}
-    mocker(OpenStreetMapCache).mock("get_payload").called_once_with(
+    mocker(open_street_map_cache).mock("get_payload").called_once_with(
         query_params
     ).return_value(payload)
-    mocker(OpenStreetMapClient).mock("request_places").not_called()
+    mocker(open_street_map).mock("request_places").not_called()
 
-    assert OpenStreetMapClient.fetch_places_payload(query_params) == payload
+    assert open_street_map.fetch_places_payload(query_params) == payload
 
 
 def test_fetch_places_payload_caches_successful_payload():
@@ -99,14 +98,14 @@ def test_fetch_places_payload_caches_successful_payload():
         json=payload,
         request=httpx.Request("GET", "https://overpass.test/api"),
     )
-    mocker(OpenStreetMapCache).mock("get_payload").return_value(None)
-    mocker(OpenStreetMapClient).mock("request_places").return_value(response)
-    mocker(OpenStreetMapCache).mock("set_payload").called_once_with(
+    mocker(open_street_map_cache).mock("get_payload").return_value(None)
+    mocker(open_street_map).mock("request_places").return_value(response)
+    mocker(open_street_map_cache).mock("set_payload").called_once_with(
         query_params,
         payload,
     )
 
-    assert OpenStreetMapClient.fetch_places_payload(query_params) == payload
+    assert open_street_map.fetch_places_payload(query_params) == payload
 
 
 def test_fetch_places_payload_raises_service_unavailable_for_error_status():
@@ -115,11 +114,11 @@ def test_fetch_places_payload_raises_service_unavailable_for_error_status():
         json={"remark": "runtime error"},
         request=httpx.Request("GET", "https://overpass.test/api"),
     )
-    mocker(OpenStreetMapCache).mock("get_payload").return_value(None)
-    mocker(OpenStreetMapClient).mock("request_places").return_value(response)
+    mocker(open_street_map_cache).mock("get_payload").return_value(None)
+    mocker(open_street_map).mock("request_places").return_value(response)
 
     with pytest.raises(OpenStreetMapResourceUnavailable):
-        OpenStreetMapClient.fetch_places_payload({
+        open_street_map.fetch_places_payload({
             "lat": 50.1101038,
             "lng": 8.6771586,
             "search_radious": 1000,
@@ -132,11 +131,11 @@ def test_fetch_places_payload_raises_service_unavailable_for_non_object_json():
         json=[],
         request=httpx.Request("GET", "https://overpass.test/api"),
     )
-    mocker(OpenStreetMapCache).mock("get_payload").return_value(None)
-    mocker(OpenStreetMapClient).mock("request_places").return_value(response)
+    mocker(open_street_map_cache).mock("get_payload").return_value(None)
+    mocker(open_street_map).mock("request_places").return_value(response)
 
     with pytest.raises(OpenStreetMapResourceUnavailable):
-        OpenStreetMapClient.fetch_places_payload({
+        open_street_map.fetch_places_payload({
             "lat": 50.1101038,
             "lng": 8.6771586,
             "search_radious": 1000,

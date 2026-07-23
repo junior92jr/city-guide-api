@@ -1,9 +1,8 @@
 import pytest
 from chainmock import mocker
 
+from places.services import search
 from places.services.mappers import OpenStreetMapApiResponse
-from places.services.open_street_map import OpenStreetMapClient
-from places.services.search import PlaceSearchService
 
 pytestmark = pytest.mark.django_db
 
@@ -29,11 +28,11 @@ def test_search_places_by_location_fetches_and_maps_payload():
             }
         ],
     }
-    mocker(OpenStreetMapClient).mock(
+    mocker(search).mock(
         "fetch_places_payload"
     ).called_once_with(query_params).return_value(payload)
 
-    response = PlaceSearchService.search_places_by_location(query_params)
+    response = search.search_places_by_location(query_params)
 
     assert isinstance(response, OpenStreetMapApiResponse)
     assert response.places[0].osm_id == 1
@@ -64,11 +63,11 @@ def test_search_places_by_location_filters_by_category():
             },
         ],
     }
-    mocker(OpenStreetMapClient).mock(
+    mocker(search).mock(
         "fetch_places_payload"
     ).called_once_with(query_params).return_value(payload)
 
-    response = PlaceSearchService.search_places_by_location(query_params)
+    response = search.search_places_by_location(query_params)
 
     assert len(response.places) == 1
     assert response.places[0].category == "parking"

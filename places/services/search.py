@@ -1,28 +1,27 @@
 from .mappers import OpenStreetMapApiResponse
-from .open_street_map import OpenStreetMapClient
-from .types import PlaceQueryParams
+from .open_street_map import PlaceQueryParams, fetch_places_payload
 
 
-class PlaceSearchService:
-    """
-    Coordinates place search through the OpenStreetMap client and response mapper.
-    """
+def search_places_by_location(
+    query_params: PlaceQueryParams,
+) -> OpenStreetMapApiResponse:
+    payload = fetch_places_payload(query_params)
+    response = OpenStreetMapApiResponse.from_api_response(payload)
+    category = query_params.get("category")
 
-    @classmethod
-    def search_places_by_location(
-        cls,
-        query_params: PlaceQueryParams,
-    ) -> OpenStreetMapApiResponse:
-        payload = OpenStreetMapClient.fetch_places_payload(query_params)
-        response = OpenStreetMapApiResponse.from_api_response(payload)
-        category = query_params.get("category")
+    if category is None:
+        return response
 
-        if category is None:
-            return response
+    return filter_places_by_category(response, category)
 
-        return OpenStreetMapApiResponse(
-            places=[
-                place for place in response.places
-                if place.category == category
-            ]
-        )
+
+def filter_places_by_category(
+    response: OpenStreetMapApiResponse,
+    category: str,
+) -> OpenStreetMapApiResponse:
+    return OpenStreetMapApiResponse(
+        places=[
+            place for place in response.places
+            if place.category == category
+        ]
+    )
