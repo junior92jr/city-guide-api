@@ -1,0 +1,19 @@
+{
+  "pythonVersion": "3.13",
+  "typeCheckingMode": "standard",
+  "deprecateTypingAliases": true,
+  "reportUnreachable": true,
+  "executionEnvironments": [
+    {
+      "root": ".",
+      "reportCallInDefaultInitializer": true,
+      "reportImplicitOverride": true,
+      "reportImplicitStringConcatenation": true,
+      "reportImportCycles": true,
+      "reportMissingSuperCall": false,
+      "reportPropertyTypeMismatch": true,
+      "reportUninitializedInstanceVariable": false,
+      "reportUnusedCallResult": false
+    }
+  ]
+}
